@@ -26,14 +26,13 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-ReactDOM.unstable_createRoot();
-
 ReactDOM.render(
   <ApolloProvider client={client}>
     <App />
   </ApolloProvider>,
   document.getElementById('root'),
 );
+// ReactDOM.unstable_createRoot();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
