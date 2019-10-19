@@ -5,13 +5,17 @@ import compression from 'compression';
 import morgan from 'morgan';
 import graphQLHTTP from 'express-graphql';
 import path from 'path';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 import apiRouter from './routes/index';
 import schema from './schema';
 
 // swager doc import
 import swaggerUi from 'swagger-ui-express';
-const swaggerDocument = require('./swagger.json');
+import swaggerDocument from './swagger.json';
+
+dotenv.config();
 
 const app = express();
 
@@ -50,6 +54,21 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+mongoose.connect(`mongodb://localhost:27017/Quicklyft`, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true,
+});
+const connection = mongoose.connection;
+connection.once('open', () => {
+  // console.error('MongoDB database connection established successfully!');
+});
+connection.once('open', () => {});
+connection.on('error', _e => {
+  // console.error(e);
+});
+
 app.use('/api/v1', apiRouter);
 
 app.use(
@@ -62,7 +81,7 @@ app.use(
 
 // swagger endpoint
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-console.log('got here');
+
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../', 'client/build')));
   app.get('/*', (_req, res) => {
